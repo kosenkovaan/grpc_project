@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package calculateservice;
+
+service CalculateService {
+    rpc Calculate (Input) returns (Output) {}
+}
+
+message Input {
+    double L = 1;
+    double T = 2;
+    double nx = 3;
+    double nt = 4;
+    double c = 5;
+}
+
+message Output {
+    repeated double X = 1;
+    repeated double T = 2;
+    repeated double u = 3;
+}
