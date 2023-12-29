@@ -1,12 +1,11 @@
-import grpc
-import numpy as np
+import time
+
 import customtkinter as ctk
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import cm
-from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-import CalculateService_pb2_grpc as pb2_grpc
-import CalculateService_pb2 as pb2
 
 class App:
     def __init__(self):
@@ -51,33 +50,49 @@ class App:
         except ValueError:
             print("Error!")
 
-        X, T, u = calculate(L, T, nx, nt, c)
 
-        figure = Figure(figsize=(9.7, 7), dpi=100)
+
+        plt.ion()
+
+        nx = int(nx)
+        nt = int(nt)
+        dx, dt = L / nx, T / nt
+
+        X = np.zeros((nt, nx))
+        Y = np.zeros((nt, nx))
+        Z = np.zeros((nt, nx))
+
+
+
+        u = np.zeros((nt, nx))  # Вертикальное смещение
+        v = np.zeros((nt, nx))  # Вертикальная скорость
+
+        u[0, :] = np.sin(np.pi * np.arange(0, L, L / nx))  # Начальные условия
+        v[0, :] = np.sin(np.pi * np.arange(0, L, L / nx))
+
+        u[:, 0] = u[:, -1] = v[:, 0] = v[:, -1] = 0  # Граничные условия
+
+        figure = plt.figure(figsize=(9.7, 7), dpi=100)
         figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
-        
-        axes = figure.add_subplot(111, projection='3d')  
-        axes.plot_surface(X, T, u, cmap=cm.coolwarm)
-        axes.set_xlabel('x')
-        axes.set_ylabel('t')
-        axes.set_zlabel('u')  
- 
         figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
 
-def calculate(L, T, nx, nt, c):
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = pb2_grpc.CalculateServiceStub(channel)
-        response = stub.Calculate(pb2.Input(L=L, T=T, nx=nx, nt=nt, c=c))
-        
-        X = np.asarray(response.X)
-        T = np.asarray(response.T)
-        u = np.asarray(response.u)
+        for n in range(0, nt - 1):  # Применение метода конечных разностей
+            plt.clf()
+            axes = figure.add_subplot(projection='3d')
+            axes.plot_surface(X, Y, Z, cmap=cm.coolwarm)
+            axes.set_xlabel('x')
+            axes.set_ylabel('t')
+            axes.set_zlabel('u')
+            for i in range(1, nx - 1):
+                X[n + 1, i] = u[n, i] + dt * v[n, i]
+                Y[n + 1, i] = v[n, i] + c ** 2 * (dt / dx ** 2) * (u[n, i + 1] - 2 * u[n, i] + u[n, i - 1])
+                Z[n+1, i] = u[n, i]
+            plt.draw()
+            plt.gcf().canvas.flush_events()
+            time.sleep(0.05)
 
-        X = X.reshape(int(nx), int(nt))
-        T = T.reshape(int(nx), int(nt))
-        u = u.reshape(int(nx), int(nt))
 
-        return X, T, u
-
+        plt.ioff()
+        plt.show()
 if __name__ == '__main__':        
     app = App()
