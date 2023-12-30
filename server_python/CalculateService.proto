@@ -7,15 +7,21 @@ service CalculateService {
 }
 
 message Input {
-    double L = 1;
-    double T = 2;
-    double nx = 3;
-    double nt = 4;
-    double c = 5;
+    double a0 = 1;
+    double a1 = 2;
+    double a2 = 3;
+    double a3 = 4;
+    double u = 5;
+    double X0_0 = 6;
+    double X0_1 = 7;
+    double X0_2 = 8;
 }
 
 message Output {
-    repeated double X = 1;
-    repeated double T = 2;
-    repeated double u = 3;
+    double X_0 = 1;
+    double X_1 = 2;
+    double X_2 = 3;
+    double X_next_0 = 4;
+    double X_next_1 = 5;
+    double X_next_2 = 6;
 }

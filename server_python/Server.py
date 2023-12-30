@@ -1,6 +1,6 @@
 import grpc
-from concurrent import futures
 import numpy as np
+from concurrent import futures
 
 import CalculateService_pb2_grpc as pb2_grpc
 import CalculateService_pb2 as pb2
@@ -8,30 +8,29 @@ import CalculateService_pb2 as pb2
 class CalculateService(pb2_grpc.CalculateServiceServicer):
 
     def Calculate(self, input, context):
-        L = input.L                     # Длина струны
-        T = input.T                     # Максимальное время
-        nx = int(input.nx)              # Количество точек по x
-        nt = int(input.nt)              # Количество точек по t
-        c = input.c                     # Скорость волны в струне
+        a0 = input.a0
+        a1 = input.a1
+        a2 = input.a2
+        a3 = input.a3
+        u = input.u
+        X0_0 = input.X0_0
+        X0_1 = input.X0_1
+        X0_2 = input.X0_2
 
-        dx, dt = L/nx,  T/nt
+        z1 = (-a0 / a3)
+        z2 = (-a1 / a3)
+        z3 = (-a2 / a3)
+        z4 = (1 / a3)
+        h = 0.2
 
-        u = np.zeros((nt, nx))          # Вертикальное смещение
-        v = np.zeros((nt, nx))          # Вертикальная скорость
+        A = np.array([[0, 1, 0], [0, 0, 1], [z1, z2, z3]])
+        B = np.array([[0], [0], [z4]])
 
-        u[0,:] = np.sin(np.pi * np.arange(0, L, L/nx))      # Начальные условия
-        v[0,:] = np.sin(np.pi * np.arange(0, L, L/nx))
+        X0 = np.array([[X0_0], [X0_1], [X0_2]])
+        X = (A @ X0 + B * u) * h + X0
+        X_next = X + h * ((3 / 2) * (A @ X + B * u) - (1 / 2) * (A @ X0 + B * u))
 
-        u[:,0] = u[:,-1] = v[:,0] = v[:,-1] = 0             # Граничные условия
-
-        for n in range(0, nt-1):                            # Применение метода конечных разностей
-            for i in range(1, nx-1):
-                u[n+1, i] = u[n, i] + dt * v[n, i]
-                v[n+1, i] = v[n, i] + c**2 * (dt / dx**2) * (u[n, i+1] - 2 * u[n, i] + u[n, i-1])
-
-        X, T = np.meshgrid(np.linspace(0, L, nx), np.linspace(0, T, nt))        # Данные для формирования ответа
-
-        return pb2.Output(X=X.reshape(nx*nt), T=T.reshape(nx*nt), u=u.reshape(nx*nt))
+        return pb2.Output(X_0=X[0][0], X_1=X[1][0], X_2=X[2][0], X_next_0=X_next[0][0], X_next_1=X_next[1][0], X_next_2=X_next[2][0])
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

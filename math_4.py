@@ -7,6 +7,7 @@ a1 = 4.4
 a2 = 53.2
 a3 = 12
 u = 10
+
 X0 = np.array([[0], [0], [0]])
 
 z1 = (-a0 / a3)
@@ -16,17 +17,14 @@ z4 = (1 / a3)
 
 A = np.array([[0, 1, 0], [0, 0, 1], [z1, z2, z3]])
 B = np.array([[0], [0], [z4]])
-E = np.eye(3)
 h = 0.2
 t = 0
+i = 1
 X = (A @ X0 + B * u) * h + X0
 T_g = []
 X_g = []
-i = 1
-
 Y_g = []
 Z_g = []
-
 
 fig, ax = plt.subplots()
 ax.set_xlim(0, 160)
@@ -35,8 +33,8 @@ line0, = ax.plot([], [], lw=2)
 line1, = ax.plot([], [], lw=2)
 line2, = ax.plot([], [], lw=2)
 ax.set_xlabel('Time')
-ax.set_ylabel('X')
-ax.set_title('Dynamic Plot of X over Time')
+ax.set_ylabel('X, Y, Z')
+ax.set_title('Dynamic Plot of X, Y, Z over Time')
 ax.grid(True)
 
 def update(frame):
@@ -54,8 +52,7 @@ def update(frame):
         line0.set_data(T_g, X_g)
         line1.set_data(T_g, Y_g)
         line2.set_data(T_g, Z_g)
-        ax.relim()
-        ax.autoscale_view()
+
         return line0, line1, line2,
 
 ani = FuncAnimation(fig, update, frames=1000, interval=10, blit=True)
