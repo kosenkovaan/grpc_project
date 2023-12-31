@@ -1,3 +1,7 @@
+import asyncio
+import threading
+import time
+import traceback
 from tkinter import Scale
 
 import customtkinter as ctk
@@ -14,7 +18,6 @@ import CalculateService_pb2_grpc as pb2_grpc
 class App:
 
     def __init__(self):
-
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("green")
 
@@ -45,6 +48,7 @@ class App:
 
         self.root.mainloop()
 
+
     def output_graph(self):
         try:
             tStart = float(self.enterTStart.get())
@@ -52,7 +56,6 @@ class App:
             hInput = float(self.enterH.get())
             if hasattr(self, 'figure_canvas'):
                 self.figure_canvas.get_tk_widget().destroy()
-
 
             global X0
             X0 = np.array([[0], [0], [0]])
@@ -106,18 +109,30 @@ class App:
 
             ani = FuncAnimation(figure, update, frames=1000, interval=10, blit=True)
             plt.show()
-        except ValueError:
+        except ValueError as e:
+            traceback.print_tb(e.__traceback__)
             print("Неккоректные данные")
         except Exception as e:
+            traceback.print_tb(e.__traceback__)
             print("Error!", e)
 
 
 def calculate(h, X0_0, X0_1, X0_2):
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = pb2_grpc.CalculateServiceStub(channel)
-        response = stub.Calculate(pb2.Input(h=h, X0_0=X0_0, X0_1=X0_1, X0_2=X0_2))
+    retry_delay = 1
+    max_retries = 10
 
-        return response.X_0, response.X_1, response.X_2, response.X_next_0, response.X_next_1, response.X_next_2
+    for _ in range(max_retries):
+        try:
+            with grpc.insecure_channel('localhost:50051') as channel:
+                stub = pb2_grpc.CalculateServiceStub(channel)
+                response = stub.Calculate(pb2.Input(h=h, X0_0=X0_0, X0_1=X0_1, X0_2=X0_2))
+
+                return response.X_0, response.X_1, response.X_2, response.X_next_0, response.X_next_1, response.X_next_2
+        except grpc.RpcError as e:
+            print(f"Ошибка RPC: {e}")
+            time.sleep(retry_delay)
+            retry_delay *= 2
+    print("Достигнуто максимальное количество попыток, сервер недоступен.")
 
 
 t = 0
