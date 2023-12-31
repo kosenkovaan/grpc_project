@@ -1,10 +1,7 @@
-import time
-
 import customtkinter as ctk
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import cm
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.animation import FuncAnimation
 
 
 class App:
@@ -20,20 +17,15 @@ class App:
         self.frame = ctk.CTkFrame(master=self.root, height=self.root.winfo_height()*0.75, width=self.root.winfo_width()*0.52, fg_color='#242424')
         self.frame.place(relx=0.33, rely=0.025)
         
-        self.enterL = ctk.CTkEntry(master=self.root, placeholder_text="Введите L, например, 10", justify='center', width=300, height=50)
-        self.enterL.place(relx=0.04, rely=0.05)
+        self.enterT = ctk.CTkEntry(master=self.root, placeholder_text="Введите начальное значение t, с", justify='center', width=300, height=50)
+        self.enterT.place(relx=0.04, rely=0.05)
 
-        self.enterT = ctk.CTkEntry(master=self.root, placeholder_text="Введите T, например, 10", justify='center', width=300, height=50)
-        self.enterT.place(relx=0.04, rely=0.15)
+        self.enterT_max = ctk.CTkEntry(master=self.root, placeholder_text="Введите конечное значение t, с", justify='center', width=300, height=50)
+        self.enterT_max.place(relx=0.04, rely=0.15)
 
-        self.enterNx = ctk.CTkEntry(master=self.root, placeholder_text="Введите nx, например, 100", justify='center', width=300, height=50)
-        self.enterNx.place(relx=0.04, rely=0.25)
+        self.enterH = ctk.CTkEntry(master=self.root, placeholder_text="Введите шаг h", justify='center', width=300, height=50)
+        self.enterH.place(relx=0.04, rely=0.25)
 
-        self.enterNt = ctk.CTkEntry(master=self.root, placeholder_text="Введите nt, например, 1000", justify='center', width=300, height=50)
-        self.enterNt.place(relx=0.04, rely=0.35)
-
-        self.enterC = ctk.CTkEntry(master=self.root, placeholder_text="Введите C, например, 1", justify='center', width=300, height=50)
-        self.enterC.place(relx=0.04, rely=0.45)
 
         self.button = ctk.CTkButton(master=self.root, text="Вывести график", width=300, height=50, command=self.output_graph)
         self.button.place(relx=0.04, rely=0.65)
@@ -41,58 +33,66 @@ class App:
         self.root.mainloop()
     
     def output_graph(self):
-        try:
-            L = float(self.enterL.get())
-            T = float(self.enterT.get())
-            nx = float(self.enterNx.get())
-            nt = float(self.enterNt.get())
-            c = float(self.enterC.get())
-        except ValueError:
-            print("Error!")
+
+        t = int(self.enterT.get())
+        t_max = int(self.enterT_max.get())
+        h = float(self.enterH.get())
 
 
+        a0 = 1
+        a1 = 4.4
+        a2 = 53.2
+        a3 = 12
+        u = 10
+        X0 = np.array([[0], [0], [0]])
 
-        plt.ion()
+        z1 = (-a0 / a3)
+        z2 = (-a1 / a3)
+        z3 = (-a2 / a3)
+        z4 = (1 / a3)
 
-        nx = int(nx)
-        nt = int(nt)
-        dx, dt = L / nx, T / nt
+        A = np.array([[0, 1, 0], [0, 0, 1], [z1, z2, z3]])
+        B = np.array([[0], [0], [z4]])
+        h = 0.2
+        X = (A @ X0 + B * u) * h + X0
+        T_g = []
+        X_g = []
+        i = 1
 
-        X = np.zeros((nt, nx))
-        Y = np.zeros((nt, nx))
-        Z = np.zeros((nt, nx))
+        Y_g = []
+        Z_g = []
 
+        fig, ax = plt.subplots()
+        ax.set_xlim(0, t_max)
+        ax.set_ylim(-2, 14)
+        line0, = ax.plot([], [], lw=2)
+        line1, = ax.plot([], [], lw=2)
+        line2, = ax.plot([], [], lw=2)
+        ax.set_xlabel('Time')
+        ax.set_ylabel('X')
+        ax.set_title('Решение ДУ')
+        ax.grid(True)
 
+        def update(frame):
+            global X, X0, i, t, t_max
+            if t < t_max:
+                X_next = X + h * ((3 / 2) * (A @ X + B * u) - (1 / 2) * (A @ X0 + B * u))
+                X_g.append(X_next[0])
+                Y_g.append(X_next[1])
+                Z_g.append(X_next[2])
+                T_g.append(t)
+                X0 = X
+                X = X_next
+                t = t + h
+                i = i + 1
+                line0.set_data(T_g, X_g)
+                line1.set_data(T_g, Y_g)
+                line2.set_data(T_g, Z_g)
+                ax.relim()
+                ax.autoscale_view()
+                return line0, line1, line2,
 
-        u = np.zeros((nt, nx))  # Вертикальное смещение
-        v = np.zeros((nt, nx))  # Вертикальная скорость
-
-        u[0, :] = np.sin(np.pi * np.arange(0, L, L / nx))  # Начальные условия
-        v[0, :] = np.sin(np.pi * np.arange(0, L, L / nx))
-
-        u[:, 0] = u[:, -1] = v[:, 0] = v[:, -1] = 0  # Граничные условия
-
-        figure = plt.figure(figsize=(9.7, 7), dpi=100)
-        figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
-        figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
-
-        for n in range(0, nt - 1):  # Применение метода конечных разностей
-            plt.clf()
-            axes = figure.add_subplot(projection='3d')
-            axes.plot_surface(X, Y, Z, cmap=cm.coolwarm)
-            axes.set_xlabel('x')
-            axes.set_ylabel('t')
-            axes.set_zlabel('u')
-            for i in range(1, nx - 1):
-                X[n + 1, i] = u[n, i] + dt * v[n, i]
-                Y[n + 1, i] = v[n, i] + c ** 2 * (dt / dx ** 2) * (u[n, i + 1] - 2 * u[n, i] + u[n, i - 1])
-                Z[n+1, i] = u[n, i]
-            plt.draw()
-            plt.gcf().canvas.flush_events()
-            time.sleep(0.05)
-
-
-        plt.ioff()
+        ani = FuncAnimation(fig, update, frames=1000, interval=10, blit=True)
         plt.show()
 if __name__ == '__main__':        
     app = App()
