@@ -19,7 +19,6 @@ A = np.array([[0, 1, 0], [0, 0, 1], [z1, z2, z3]])
 B = np.array([[0], [0], [z4]])
 h = 0.2
 t = 0
-i = 1
 X = (A @ X0 + B * u) * h + X0
 T_g = []
 X_g = []
@@ -38,7 +37,7 @@ ax.set_title('Dynamic Plot of X, Y, Z over Time')
 ax.grid(True)
 
 def update(frame):
-    global X, X0, t, i
+    global X, X0, t
     if t < 160:
         X_next = X + h * ((3 / 2) * (A @ X + B * u) - (1 / 2) * (A @ X0 + B * u))
         X_g.append(X_next[0])
@@ -48,7 +47,6 @@ def update(frame):
         X0 = X
         X = X_next
         t = t + h
-        i = i + 1
         line0.set_data(T_g, X_g)
         line1.set_data(T_g, Y_g)
         line2.set_data(T_g, Z_g)
