@@ -59,10 +59,14 @@ class App:
         Y_g = []
         Z_g = []
 
-        figure = Figure(figsize=(9.7, 7), dpi=100)
-        figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
+        #figure = Figure(figsize=(9.7, 7), dpi=100)
+        #figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
+        #figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
         
-        axes = figure.add_subplot(111)
+        #axes = figure.add_subplot(111)
+
+        figure, axes = plt.subplots()
+
         axes.set_xlim(0, 160)
         axes.set_ylim(-2, 14)
         line0, = axes.plot([], [], lw=2)
@@ -81,8 +85,8 @@ class App:
                 Y_g.append(X_next_1)
                 Z_g.append(X_next_2)
                 T_g.append(t)
-                X0 = np.array([X_0, X_1, X_2])
-                X = [X_next_0, X_next_1, X_next_2]
+                X0 = np.array([[X_0], [X_1], [X_2]])
+                X = np.array([[X_next_0], [X_next_1], [X_next_2]])
                 t = t + h
                 i = i + 1
                 line0.set_data(T_g, X_g)
@@ -92,9 +96,8 @@ class App:
                 return line0, line1, line2,
 
         ani = FuncAnimation(figure, update, frames=1000, interval=10, blit=True)
-        #plt.show()
-        figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
-
+        plt.show()
+        
 def calculate(a0, a1, a2, a3, u, X0_0, X0_1, X0_2):
     with grpc.insecure_channel('localhost:50051') as channel:
         stub = pb2_grpc.CalculateServiceStub(channel)

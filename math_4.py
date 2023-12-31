@@ -41,6 +41,7 @@ def update(frame):
     if t < 160:
         X_next = X + h * ((3 / 2) * (A @ X + B * u) - (1 / 2) * (A @ X0 + B * u))
         X_g.append(X_next[0])
+        print(X_next[0])
         Y_g.append(X_next[1])
         Z_g.append(X_next[2])
         T_g.append(t)
