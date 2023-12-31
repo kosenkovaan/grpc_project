@@ -76,7 +76,7 @@ class App:
         axes.grid(True)
 
         def update(frame):
-            global X0, t, i, h
+            global X0, t, h
             if t < 160:
                 X_0, X_1, X_2, X_next_0, X_next_1, X_next_2 = calculate(a0, a1, a2, a3, u, X0[0][0], X0[1][0], X0[2][0])
                 X_g.append(X_next_0)
@@ -86,7 +86,6 @@ class App:
                 X0 = np.array([[X_0], [X_1], [X_2]])
                 X = np.array([[X_next_0], [X_next_1], [X_next_2]])
                 t = t + h
-                i = i + 1
                 line0.set_data(T_g, X_g)
                 line1.set_data(T_g, Y_g)
                 line2.set_data(T_g, Z_g)
@@ -95,7 +94,7 @@ class App:
 
         ani = FuncAnimation(figure, update, frames=1000, interval=10, blit=True)
         plt.show()
-        
+
 def calculate(a0, a1, a2, a3, u, X0_0, X0_1, X0_2):
     with grpc.insecure_channel('localhost:50051') as channel:
         stub = pb2_grpc.CalculateServiceStub(channel)
@@ -105,7 +104,6 @@ def calculate(a0, a1, a2, a3, u, X0_0, X0_1, X0_2):
 
 h = 0.2
 t = 0
-i = 1
 X0 = np.array([[0], [0], [0]])
 
 if __name__ == '__main__':        
