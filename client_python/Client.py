@@ -59,13 +59,11 @@ class App:
         Y_g = []
         Z_g = []
 
-        #figure = Figure(figsize=(9.7, 7), dpi=100)
-        #figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
-        #figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
-        
-        #axes = figure.add_subplot(111)
 
         figure, axes = plt.subplots()
+        figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
+        figure_canvas.draw()
+        figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
 
         axes.set_xlim(0, 160)
         axes.set_ylim(-2, 14)
