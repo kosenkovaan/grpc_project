@@ -53,6 +53,7 @@ class App:
             if hasattr(self, 'figure_canvas'):
                 self.figure_canvas.get_tk_widget().destroy()
 
+
             global X0
             X0 = np.array([[0], [0], [0]])
             global t
@@ -98,7 +99,8 @@ class App:
                     line0.set_data(T_g, X_g)
                     line1.set_data(T_g, Y_g)
                     line2.set_data(T_g, Z_g)
-                    time_slider.configure(to=t)
+                    if t > tStart:
+                        time_slider.configure(to=t)
 
                     return line0, line1, line2,
 
