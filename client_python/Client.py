@@ -1,15 +1,15 @@
 import traceback
-from functools import partial
-import grpc
-from matplotlib.animation import FuncAnimation
-import numpy as np
-import matplotlib.pyplot as plt
+from tkinter import Scale
+
 import customtkinter as ctk
-from matplotlib.figure import Figure
+import grpc
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-import CalculateService_pb2_grpc as pb2_grpc
 import CalculateService_pb2 as pb2
+import CalculateService_pb2_grpc as pb2_grpc
 
 
 class App:
@@ -70,6 +70,10 @@ class App:
             figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
             figure_canvas.draw()
             figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
+            time_slider = Scale(self.root, from_=tStart, to=tStart, orient='horizontal', length=300,
+                                label="Выберите время")
+            time_slider.place(relx=0.04, rely=0.35)
+            time_slider.set(tStart)
 
             axes.set_xlim(tStart, tEnd)
             axes.set_ylim(-2, 16)
@@ -95,6 +99,7 @@ class App:
                     line0.set_data(T_g, X_g)
                     line1.set_data(T_g, Y_g)
                     line2.set_data(T_g, Z_g)
+                    time_slider.configure(to=t)
 
                     return line0, line1, line2,
 
