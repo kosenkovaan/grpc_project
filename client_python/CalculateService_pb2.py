@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16\x43\x61lculateService.proto\x12\x10\x63\x61lculateservice\"l\n\x05Input\x12\n\n\x02\x61\x30\x18\x01 \x01(\x01\x12\n\n\x02\x61\x31\x18\x02 \x01(\x01\x12\n\n\x02\x61\x32\x18\x03 \x01(\x01\x12\n\n\x02\x61\x33\x18\x04 \x01(\x01\x12\t\n\x01u\x18\x05 \x01(\x01\x12\x0c\n\x04X0_0\x18\x06 \x01(\x01\x12\x0c\n\x04X0_1\x18\x07 \x01(\x01\x12\x0c\n\x04X0_2\x18\x08 \x01(\x01\"e\n\x06Output\x12\x0b\n\x03X_0\x18\x01 \x01(\x01\x12\x0b\n\x03X_1\x18\x02 \x01(\x01\x12\x0b\n\x03X_2\x18\x03 \x01(\x01\x12\x10\n\x08X_next_0\x18\x04 \x01(\x01\x12\x10\n\x08X_next_1\x18\x05 \x01(\x01\x12\x10\n\x08X_next_2\x18\x06 \x01(\x01\x32T\n\x10\x43\x61lculateService\x12@\n\tCalculate\x12\x17.calculateservice.Input\x1a\x18.calculateservice.Output\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16\x43\x61lculateService.proto\x12\x10\x63\x61lculateservice\"<\n\x05Input\x12\t\n\x01h\x18\x01 \x01(\x01\x12\x0c\n\x04X0_0\x18\x02 \x01(\x01\x12\x0c\n\x04X0_1\x18\x03 \x01(\x01\x12\x0c\n\x04X0_2\x18\x04 \x01(\x01\"e\n\x06Output\x12\x0b\n\x03X_0\x18\x01 \x01(\x01\x12\x0b\n\x03X_1\x18\x02 \x01(\x01\x12\x0b\n\x03X_2\x18\x03 \x01(\x01\x12\x10\n\x08X_next_0\x18\x04 \x01(\x01\x12\x10\n\x08X_next_1\x18\x05 \x01(\x01\x12\x10\n\x08X_next_2\x18\x06 \x01(\x01\x32T\n\x10\x43\x61lculateService\x12@\n\tCalculate\x12\x17.calculateservice.Input\x1a\x18.calculateservice.Output\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,9 +22,9 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'CalculateService_pb2', _glo
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   _globals['_INPUT']._serialized_start=44
-  _globals['_INPUT']._serialized_end=152
-  _globals['_OUTPUT']._serialized_start=154
-  _globals['_OUTPUT']._serialized_end=255
-  _globals['_CALCULATESERVICE']._serialized_start=257
-  _globals['_CALCULATESERVICE']._serialized_end=341
+  _globals['_INPUT']._serialized_end=104
+  _globals['_OUTPUT']._serialized_start=106
+  _globals['_OUTPUT']._serialized_end=207
+  _globals['_CALCULATESERVICE']._serialized_start=209
+  _globals['_CALCULATESERVICE']._serialized_end=293
 # @@protoc_insertion_point(module_scope)

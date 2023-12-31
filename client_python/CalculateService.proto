@@ -7,14 +7,10 @@ service CalculateService {
 }
 
 message Input {
-    double a0 = 1;
-    double a1 = 2;
-    double a2 = 3;
-    double a3 = 4;
-    double u = 5;
-    double X0_0 = 6;
-    double X0_1 = 7;
-    double X0_2 = 8;
+    double h = 1;
+    double X0_0 = 2;
+    double X0_1 = 3;
+    double X0_2 = 4;
 }
 
 message Output {

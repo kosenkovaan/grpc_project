@@ -8,11 +8,12 @@ import CalculateService_pb2 as pb2
 class CalculateService(pb2_grpc.CalculateServiceServicer):
 
     def Calculate(self, input, context):
-        a0 = input.a0
-        a1 = input.a1
-        a2 = input.a2
-        a3 = input.a3
-        u = input.u
+
+        a0 = 1.0
+        a1 = 4.4
+        a2 = 53.2
+        a3 = 12.0
+        u = 10.0
         X0_0 = input.X0_0
         X0_1 = input.X0_1
         X0_2 = input.X0_2
@@ -21,7 +22,7 @@ class CalculateService(pb2_grpc.CalculateServiceServicer):
         z2 = (-a1 / a3)
         z3 = (-a2 / a3)
         z4 = (1 / a3)
-        h = 0.2
+        h = input.h
 
         A = np.array([[0, 1, 0], [0, 0, 1], [z1, z2, z3]])
         B = np.array([[0], [0], [z4]])
