@@ -1,4 +1,3 @@
-import traceback
 from tkinter import Scale
 
 import customtkinter as ctk
@@ -109,7 +108,6 @@ class App:
             print("Неккоректные данные")
         except Exception as e:
             print("Error!", e)
-            traceback.print_tb(e.__traceback__)
 
 
 def calculate(h, X0_0, X0_1, X0_2):
