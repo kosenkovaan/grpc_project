@@ -1,8 +1,8 @@
 import asyncio
 import threading
 import time
+import tkinter
 import traceback
-from tkinter import Scale
 
 import customtkinter as ctk
 import grpc
@@ -16,7 +16,6 @@ import CalculateService_pb2_grpc as pb2_grpc
 
 
 class App:
-
     def __init__(self):
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("green")
@@ -69,12 +68,29 @@ class App:
             Y_g = []
             Z_g = []
 
+            current_value = tkinter.DoubleVar()
+
+            def get_current_value():
+                cur_val = current_value.get()
+                t_val = min(T_g, key=lambda x: abs(x - cur_val))
+                t_index = T_g.index(t_val)
+                x_val = X_g[t_index]
+                y_val = Y_g[t_index]
+                z_val = Z_g[t_index]
+                return 'Текущее значение: {: .2f}\nx: {: .2f}\ny: {: .2f}\nz: {: .2f}'.format(cur_val, x_val, y_val, z_val)
+
+            def slider_changed(event):
+                value_label.configure(text=get_current_value())
+
+            value_label = ctk.CTkLabel(self.root, text="Выберите значение")
+            value_label.grid(row=2, columnspan=2, ipadx=10, ipady=6, padx=100, pady=300, sticky='n')
+
             figure, axes = plt.subplots()
             figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
             figure_canvas.draw()
             figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
-            time_slider = Scale(self.root, from_=tStart, to=tStart, orient='horizontal', length=300,
-                                label="Выберите время")
+            
+            time_slider = ctk.CTkSlider(self.root, from_=tStart, to=tStart+hInput, command=slider_changed, variable=current_value)
             time_slider.place(relx=0.04, rely=0.35)
             time_slider.set(tStart)
 
