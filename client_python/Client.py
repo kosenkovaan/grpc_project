@@ -83,14 +83,14 @@ class App:
                 value_label.configure(text=get_current_value())
 
             value_label = ctk.CTkLabel(self.root, text="Выберите значение")
-            value_label.grid(row=2, columnspan=2, ipadx=10, ipady=6, padx=100, pady=300, sticky='n')
+            value_label.grid(row=2, columnspan=2, ipadx=10, ipady=6, padx=100, pady=250, sticky='n')
 
             figure, axes = plt.subplots()
             figure_canvas = FigureCanvasTkAgg(figure, master=self.root)
             figure_canvas.draw()
             figure_canvas.get_tk_widget().place(relx=0.33, rely=0.025)
             
-            time_slider = ctk.CTkSlider(self.root, from_=tStart, to=tStart+hInput, command=slider_changed, variable=current_value)
+            time_slider = ctk.CTkSlider(self.root, from_=tStart, to=tStart+hInput, width=300, command=slider_changed, variable=current_value)
             time_slider.place(relx=0.04, rely=0.35)
             time_slider.set(tStart)
 
